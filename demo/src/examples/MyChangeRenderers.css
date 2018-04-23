@@ -1,0 +1,17 @@
+.tree-indent {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+}
+
+.layer-node {
+  border-bottom: 1px solid #cccccc;
+  display: flex;
+}
+
+.layer-node > span {
+  width: 20px;
+  line-height: 20px;
+  text-align: center;
+}
+

@@ -4,9 +4,17 @@
   text-align: center;
 }
 
+.debug .tree-indent {
+  outline: 1px dotted red;
+}
+
 .layer-node {
   border-bottom: 1px solid #cccccc;
   display: flex;
+}
+
+.layer-node.selected {
+  background-color: pink;
 }
 
 .layer-node > span {

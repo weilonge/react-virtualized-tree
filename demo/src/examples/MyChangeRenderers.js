@@ -15,30 +15,59 @@ const MAX_DEEPNESS = 4;
 const DATA_NODES = true ? Nodes :
   constructTree(MAX_DEEPNESS, MAX_NUMBER_OF_CHILDREN ,MIN_NUMBER_OF_PARENTS);
 
-const TreeItem = ({ node, children, onClick }) => {
+const TreeItem = ({ node, children, onClick, selected }) => {
   const indents = () => node.parents.map(
     (item, i) => (<div className="tree-indent" key={i}>|</div>)
   );
 
+  let className = "layer-node" +
+    (selected ? " selected" : "") +
+    (true ? " debug" : "");
+
   return (
-    <div className="layer-node" onClick={onClick}>
+    <div className={className} onClick={e => onClick(e, node)}>
       {indents()}
       { children }
     </div>);
 };
 
 class MyChangeRenderers extends Component {
-  state = {
-    nodes: DATA_NODES,
-    selected: [],
+  constructor(props) {
+    super(props);
+    this.state = {
+      nodes: DATA_NODES,
+      lastSelect: null,
+      selected: new Set(),
+    };
   }
 
   handleChange = (nodes) => {
     this.setState({ nodes });
   }
 
-  handleClick = (e) => {
+  handleClick = (e, node) => {
+    const rangeSelect = e.shiftKey;
+    const multiSelect = e.metaKey || e.ctrlKey;
+    this.setState(prevState => {
+      let {selected, lastSelect, ...rest} = prevState;
+      if (!multiSelect && !rangeSelect) {
+        const had = selected.has(node.id);
+        selected.clear();
+        if (!had) {
+          selected.add(node.id);
+          lastSelect = node.id;
+        }
+      } else {
+        selected.add(node.id);
+        lastSelect = node.id;
+      }
+      return {selected, lastSelect, ...rest};
+    });
     e.stopPropagation();
+  }
+
+  isSelected(id) {
+    return this.state.selected.has(id);
   }
 
   render() {
@@ -46,13 +75,13 @@ class MyChangeRenderers extends Component {
       <Tree
         nodes={this.state.nodes}
         onChange={this.handleChange}
-        onSelect={this.handleSelect}
         nodeMarginLeft={0}
       >
         {
           ({ node, ...rest }) =>
             <TreeItem
               node={node}
+              selected={this.isSelected(node.id)}
               onClick={this.handleClick}
               {...rest}
             >

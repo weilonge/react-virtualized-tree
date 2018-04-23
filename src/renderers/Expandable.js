@@ -16,17 +16,23 @@ const Expandable = ({
     lastChild: ''
   }
   }) => {
-  const { hasChildren, isExpanded } = getNodeRenderOptions(node);
+  const { hasChildren, isExpanded, isFolder } = getNodeRenderOptions(node);
   const className = classNames({
-    [iconsClassNameMap.expanded]: hasChildren && isExpanded,
-    [iconsClassNameMap.collapsed]: hasChildren && !isExpanded,
-    [iconsClassNameMap.lastChild]: !hasChildren
+    [iconsClassNameMap.expanded]: isFolder && isExpanded,
+    [iconsClassNameMap.collapsed]: isFolder && !isExpanded,
+    [iconsClassNameMap.lastChild]: !isFolder
   });
 
-  const handleChange = () => onChange(updateNode(node, { expanded: !isExpanded }));
+    const handleChange = (e) => {
+      if (!isFolder) {
+        return;
+      }
+      e.stopPropagation();
+      onChange(updateNode(node, { expanded: !isExpanded }));
+    };
 
   return (
-    <span onDoubleClick={handleChange}>
+    <span>
       <i
         tabIndex={0}
         id={node.id}

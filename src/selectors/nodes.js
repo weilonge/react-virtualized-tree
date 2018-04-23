@@ -7,11 +7,13 @@ export const getNodeRenderOptions = createSelector(
   (node => (node.state || {}).expanded),
   (node => (node.state || {}).favorite),
   (node => (node.state || {}).deletable),
+  (node => Array.isArray(node.children)),
   (node => node.children),
-  (expanded, favorite, deletable, children = []) => ({
-    hasChildren: !!children.length,
+  (expanded, favorite, deletable, isFolder, children) => ({
+    hasChildren: isFolder && !!children.length,
     isExpanded: !!expanded,
     isFavorite: !!favorite,
+    isFolder: isFolder,
     isDeletable: !!deletable
   })
 );
